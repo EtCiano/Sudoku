@@ -14,24 +14,40 @@ function gerarSudokuInicial() {
                 const numeroInteiro = numeros[j]
                 sudokuTab[i][j] = numeroInteiro
             } else {
-                sudokuTab[i][j] = j+1
+                sudokuTab[i][j] = 0
             }
         }
-        console.log(sudokuTab[i])
     }
 }
 
 
 function gerarSudokuTodo() {
-    let numeros = Array.from({ length: 10 }, (_, i) => i);
-    for (let i = 1; i < 9; i++) {
-        for (let j = 0; j < 9; j++) {
-            console.log('vai ter')
-        }
-    }
+    gerarSudokuInicial();
+    preencherComBacktracking(1, 0);
 }
 
-function verificarPosicao(y, x) {
+function preencherComBacktracking(i, j) {
+    if (i === 9) return true;
+
+    const proximoJ = (j + 1) % 9;
+    const proximoI = proximoJ === 0 ? i + 1 : i;
+
+    for (let numero = 1; numero <= 9; numero++) {
+        if (verificarPosicao(i, j, numero)) {
+            sudokuTab[i][j] = numero;
+
+            if (preencherComBacktracking(proximoI, proximoJ)) {
+                return true;
+            }
+
+            sudokuTab[i][j] = 0;
+        }
+    }
+
+    return false;
+}
+
+function verificarPosicao(y, x, numeroDesejado) {
     const xRelativo = x % 3;
     const yRelativo = y % 3;
     const setorPos = [Math.floor(x / 3), Math.floor(y / 3)]
@@ -46,12 +62,13 @@ function verificarPosicao(y, x) {
     linha.splice(yRelativo, 1)
     linha = linha.flat(Infinity)
 
-    let numeroNoSudoku = sudokuTab[y][x]
+    // let numeroNoSudoku = sudokuTab[y][x]
 
     let setorSudoku = structuredClone(sudokuTab[y])
     setorSudoku.splice(x, 1)
-    console.log(`Tem repetido na: \n Coluna?: ${coluna.includes(numeroNoSudoku)} \n Linha?: ${linha.includes(numeroNoSudoku)} \n Setor?: ${setorSudoku.includes(numeroNoSudoku)}`)
-    return !(coluna.includes(numeroNoSudoku) || linha.includes(numeroNoSudoku) || setorSudoku.includes(numeroNoSudoku))
+    // console.log(`Tem repetido na: \n Coluna?: ${coluna.includes(numeroDesejado)} \n Linha?: ${linha.includes(numeroDesejado)} \n Setor?: ${setorSudoku.includes(numeroDesejado)}`)
+    console.log(!(coluna.includes(numeroDesejado) || linha.includes(numeroDesejado) || setorSudoku.includes(numeroDesejado)))
+    return !(coluna.includes(numeroDesejado) || linha.includes(numeroDesejado) || setorSudoku.includes(numeroDesejado))
 }
 
 function mostrarSudoku() {
@@ -66,10 +83,9 @@ function mostrarSudoku() {
     }
 }
 
-gerarSudokuInicial()
+// gerarSudokuInicial()
 gerarSudokuTodo()
 mostrarSudoku()
-console.log(verificarPosicao(0, 3))
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -79,4 +95,4 @@ function shuffle(array) {
   return array;
 }
 
-// TODO: adicionar a função para gerar o sudoku usando a função verificarPosicao (linha 25)
+// TODO: adicionar a função para gerar o sudoku incompleto OU deixar o sudoku vazio e checar cada ação do usuário com a verificarPosição
