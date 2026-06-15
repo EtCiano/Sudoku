@@ -134,4 +134,4 @@ function shuffle(array) {
   return array;
 }
 
-// TODO: adicionar a função para gerar o sudoku parcialmente completo
+// TODO: organizar o código
