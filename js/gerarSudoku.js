@@ -25,6 +25,8 @@ function gerarSudokuInicial() {
 function gerarSudokuTodo() {
     gerarSudokuInicial();
     preencherComBacktracking(1, 0);
+    revelarParcialmente(3)
+    mostrarSudoku()
 }
 
 function preencherComBacktracking(i, j) {
@@ -49,7 +51,6 @@ function preencherComBacktracking(i, j) {
 }
 
 function verificarPosicao(y, x, numeroDesejado) {
-    numeroDesejado = parseInt(numeroDesejado)
     const xRelativo = x % 3;
     const yRelativo = y % 3;
     const setorPos = [Math.floor(x / 3), Math.floor(y / 3)]
@@ -77,6 +78,27 @@ function verificarPosicao(y, x, numeroDesejado) {
     return !(coluna.includes(numeroDesejado) || linha.includes(numeroDesejado) || setorSudoku.includes(numeroDesejado))
 }
 
+function revelarParcialmente(visivelPorSessao) {
+    for (let blocoY = 0; blocoY < 3; blocoY++) {
+        for (let blocoX = 0; blocoX < 3; blocoX++) {
+
+            let posicoes = [];
+            for (let dy = 0; dy < 3; dy++) {
+                for (let dx = 0; dx < 3; dx++) {
+                    posicoes.push([blocoY * 3 + dy, blocoX * 3 + dx]);
+                }
+            }
+
+            posicoes = shuffle(posicoes);
+            for (let k = visivelPorSessao; k < 9; k++) {
+                const [i, j] = posicoes[k];
+                sudokuTab[i][j] = NaN;
+            }
+        }
+    }
+    console.log(sudokuTab)
+}
+
 function mostrarSudoku() {
     for (let i = 0; i < 9; i++) {
         elementosSudoku.push([])
@@ -89,21 +111,20 @@ function mostrarSudoku() {
             elementosSudoku[i].push(input)
             
             input.addEventListener('change', function() {
-                let valor = input.value
+                let valor = parseInt(input.value)
                 if (!verificarPosicao(i, j, valor)) {
                     input.style.backgroundColor = 'red'
                 } else {
                     input.style.backgroundColor = 'white'
                 }
+                sudokuTab[i][j] = valor
             })
         }
     }
     console.log(elementosSudoku)
 }
 
-gerarSudokuInicial()
-// gerarSudokuTodo()
-mostrarSudoku()
+gerarSudokuTodo()
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
