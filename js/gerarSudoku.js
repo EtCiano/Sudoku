@@ -2,6 +2,7 @@
 const sudokuTab = Array.from({ length: 9 }, () => new Array(9).fill(0))
 const divPrincipal = document.getElementById('div_principal')
 const sessoesSudoku = [...divPrincipal.children]
+let elementosSudoku = []
 
 
 function gerarSudokuInicial() {
@@ -14,7 +15,7 @@ function gerarSudokuInicial() {
                 const numeroInteiro = numeros[j]
                 sudokuTab[i][j] = numeroInteiro
             } else {
-                sudokuTab[i][j] = 0
+                sudokuTab[i][j] = NaN
             }
         }
     }
@@ -48,6 +49,7 @@ function preencherComBacktracking(i, j) {
 }
 
 function verificarPosicao(y, x, numeroDesejado) {
+    numeroDesejado = parseInt(numeroDesejado)
     const xRelativo = x % 3;
     const yRelativo = y % 3;
     const setorPos = [Math.floor(x / 3), Math.floor(y / 3)]
@@ -66,6 +68,10 @@ function verificarPosicao(y, x, numeroDesejado) {
 
     let setorSudoku = structuredClone(sudokuTab[y])
     setorSudoku.splice(x, 1)
+    
+    // console.log(linha)
+    // console.log(coluna)
+    // console.log(setorSudoku)
     // console.log(`Tem repetido na: \n Coluna?: ${coluna.includes(numeroDesejado)} \n Linha?: ${linha.includes(numeroDesejado)} \n Setor?: ${setorSudoku.includes(numeroDesejado)}`)
     console.log(!(coluna.includes(numeroDesejado) || linha.includes(numeroDesejado) || setorSudoku.includes(numeroDesejado)))
     return !(coluna.includes(numeroDesejado) || linha.includes(numeroDesejado) || setorSudoku.includes(numeroDesejado))
@@ -73,18 +79,30 @@ function verificarPosicao(y, x, numeroDesejado) {
 
 function mostrarSudoku() {
     for (let i = 0; i < 9; i++) {
+        elementosSudoku.push([])
         for (let j = 0; j < 9; j++) {
             const input = document.createElement('input')
             input.type = 'number'
             input.value = sudokuTab[i][j]
             input.classList.add('inputSudoku')
             sessoesSudoku[i].append(input)
+            elementosSudoku[i].push(input)
+            
+            input.addEventListener('change', function() {
+                let valor = input.value
+                if (!verificarPosicao(i, j, valor)) {
+                    input.style.backgroundColor = 'red'
+                } else {
+                    input.style.backgroundColor = 'white'
+                }
+            })
         }
     }
+    console.log(elementosSudoku)
 }
 
-// gerarSudokuInicial()
-gerarSudokuTodo()
+gerarSudokuInicial()
+// gerarSudokuTodo()
 mostrarSudoku()
 
 function shuffle(array) {
@@ -95,4 +113,4 @@ function shuffle(array) {
   return array;
 }
 
-// TODO: adicionar a função para gerar o sudoku incompleto OU deixar o sudoku vazio e checar cada ação do usuário com a verificarPosição
+// TODO: adicionar a função para gerar o sudoku parcialmente completo
